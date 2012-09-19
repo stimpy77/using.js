@@ -1,0 +1,177 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<title>using.js basic test</title>
+		<script language="JavaScript" type="text/javascript" src="using.js"></script>
+		<script language="JavaScript" type="text/javascript">
+			using.register('hello', 
+				'helloworld.js'
+				);
+			using.register('hello2', 
+				'helloworld2.js'
+				);
+			using.register('moo', 
+				true, 500, 
+				'http://www.cachefile.net.nyud.net/scripts/mootools/1.11/mootools_full_1.11_packed.js'
+				);
+			using.register('multi', 
+				'dep1.js',
+				'dep2.js'
+				);
+		    using.register('jquery', true,
+		        'http://cachefile.net/scripts/jquery/1.2.3/jquery-1.2.3.min.js');
+		        
+		    using.register('jquery-blockUI', true,
+		        	'http://cachefile.net/scripts/jquery/plugins/blockUI/2.02/jquery.blockUI.js'
+				).requires('jquery');
+
+		</script>
+		<style type="text/css">
+		    div.test 
+		    {
+		    	/*float: left; */
+		    	margin: 15px;
+		    	border: outset 1px;
+		    	padding: 5px;
+		    	background-color: #c0c0c0;
+		    }
+		    
+		    .codeClick 
+		    {
+		    	text-decoration: underline;
+		    	cursor: pointer;
+		    }
+		    
+		    .code 
+		    {
+		    	border: solid 1px black;
+		    	padding: 5px;
+		    	background-color: White;
+		    	font-family: Courier New, Monospace;
+		    }
+		</style>
+	</head>
+	<body>
+		<h3>using.js</h3>
+		<p>
+			Author: Jon Davis &lt;jon@jondavis.net><br />
+			Current Version: 1.3<br />
+			Released: April 17, 2008<br />
+			Download from: <a href="http://cachefile.net/scripts/using/">http://cachefile.net/scripts/using/</a>
+		</p>
+		<p>The blog page that explains using.js is here: <a href="http://www.jondavis.net/blog/post/2008/04/Javascript-Introducing-Using-(js).aspx">http://www.jondavis.net/blog/post/2008/04/Javascript-Introducing-Using-(js).aspx</a></p>
+		<p>
+			This is a quick and dirty test of using.js. The 
+			<a href="using.js" style="font-size: 1.2em;">using.js</a> (10kb) script 
+			allows you specify a dependency script with its source URL for 
+			a particular feature so that it can be late-loaded, but it 
+			will not re-load the source twice. There is <b><i>no dependency</i></b>
+			upon other script libraries like jQuery to get started with using.js.
+		</p>
+		<p>
+			The callback function will try to wait a bit for the referenced script
+			to load. The callback is truly synchronous (no wait) or the delay is set using 
+			<tt>using.wait=<i>[milliseconds]</i>;</tt>. You can reference
+			scripts on different domains by setting the global <tt>using.wait</tt> 
+			property, or by declaring the URIs as external URIs by passing <tt>true</tt>
+			and/or an optional post-load milliseconds parameter before each URL, i.e.<br />
+			<tt>using.register(true, 750, 'http://cachefile.net/scripts/jquery/1.2.3/jquery-1.2.3.js');</tt>.
+		</p>
+		<p>
+			The URL parameter in <tt>using.register()</tt>can take several URLs, not just one, as 
+			additional (third, fourth, ..) parameters to the using.register() function.
+		</p>
+		<p>You do not need a callback function when calling using() if you just want to 
+			make sure the referenced script is loaded. <tt>using('jquery');</tt> works fine
+			as long as it has been pre-registered.</p>
+		<p>The big advantage of using.js is that you can manage one source script
+			that does nothing but register a big list of script files by name, then 
+			in a larger web client app you can reference using.js and the registrations
+			script and then have all you need for your app.</p>
+		<p>
+			Test: Click on the buttons below more than once:
+		</p>
+		<div class="test">
+		    <div>invoke a function declared from helloworld.js</div>
+		    <button onclick="using('hello', function() {
+		        alert(window.hello_isLoaded());
+		    }); ">helloworld.js</button> end result: 1st click, "Hello World! I'm loaded!!", 2nd click, "I'm already loaded."
+		    <div class="codeClick" onclick="this.className='code'; this.innerText = this.text = this.innerHTML = this.parentNode.getElementsByTagName('button')[0].onclick.toString();">code</div>
+		</div>
+		<div class="test">
+		    <div>fetch and invoke helloworld2.js</div>
+		    <button onclick="using('hello2');">no callback</button> end result: 1st click only == alert from the script
+		    <div class="codeClick" onclick="this.className='code'; this.innerText = this.text = this.innerHTML = this.parentNode.getElementsByTagName('button')[0].onclick.toString();">code</div>
+		</div>
+		<div class="test">
+		    <div>fetch and load a function from an outside domain</div>
+		    <button onclick="document.body.style.cursor='wait';
+		        using('moo', function() {
+		            alert('moo! .. random: ' + $random(1,5));
+		            document.body.style.cursor='default';
+		        });">moo tools</button> end result: invoke moo tools function $random()
+		    <div class="codeClick" onclick="this.className='code'; this.innerText = this.text = this.innerHTML = this.parentNode.getElementsByTagName('button')[0].onclick.toString();">code</div>
+		</div>
+		
+		<div class="test">
+		    <div>fetch and load variables from two different files under one declared 'registration'</div>
+		    <button onclick="using('multi', function() {
+		        alert('dep1: ' + window.dep1 + ', dep2: ' + window.dep2);
+		    });">multiple dependencies</button> end result: neither of two variables 'undefined'
+		    <div class="codeClick" onclick="this.className='code'; this.innerText = this.text = this.innerHTML = this.parentNode.getElementsByTagName('button')[0].onclick.toString();">code</div>
+		</div>
+		
+		<div class="test">
+		    <div>fetch and load a library having a dependency upon another declared 'registration'</div>
+		    <button onclick="if (window.jQuery) alert('Refresh first please.');
+		        document.body.style.cursor='wait';
+		        using('jquery-blockUI', function() {
+		            document.body.style.cursor='default';
+		            $.blockUI(); 
+		            setTimeout($.unblockUI, 2000);
+		        });">subdependency</button> end result: "please wait"
+		    <div class="codeClick" onclick="this.className='code'; this.innerText = this.text = this.innerHTML = this.parentNode.getElementsByTagName('button')[0].onclick.toString();">code</div>
+		</div>
+		
+		<div class="test">
+		    <div>basic test to be sure that the object (in this case a string) going in is also what comes out (a string, not the window [object])</div>
+		    <button onclick="if (window.jQuery) alert('Refresh first please.');
+		        using('jquery-blockUI', function() {
+		            window.eval('if (this != window) { alert (this + \' .. test passed\') } else { alert(\'test failed!\'); };');}, 
+		            'Context object was retained.');">retain context object (basic)</button>
+		    <div class="codeClick" onclick="this.className='code'; this.innerText = this.text = this.innerHTML = this.parentNode.getElementsByTagName('button')[0].onclick.toString();">code</div>
+		</div>
+		
+		<div class="test">
+		    <div>declare multiple pre-declared dependencies for a callback function</div>
+		    <button onclick="if (window.jQuery) alert('Refresh first please.');using('jquery', 'jquery-blockUI', function() {document.body.style.cursor='default';$.blockUI(); setTimeout($.unblockUI, 2000);});">runtime declared multi-dependency</button> end result: "please wait"
+		    <div class="codeClick" onclick="this.className='code'; this.innerText = this.text = this.innerHTML = this.parentNode.getElementsByTagName('button')[0].onclick.toString();">code</div>
+		</div>
+		
+		<div class="test">
+		    <div>load and run a couple URLs without pre-registering </div>
+		    <button onclick="
+		        window.jQuery = undefined; 
+		        window.$=undefined;
+		        using(
+		            'url(http://cachefile.net/scripts/jquery/1.2.3/jquery-1.2.3.min.js)',
+		            'url(http://cachefile.net/scripts/jquery/plugins/blockUI/2.02/jquery.blockUI.js)', 
+		            function() {
+		                try {
+		                    $.blockUI($.fn.jquery);
+		                    window.jqlload = true;
+		                    setTimeout($.unblockUI, 5000);
+		                } catch (err) {
+		                    if (window.jqlload) {
+	                            alert(err + ' (resource was cleared, and was not re-fetched [this is good])');
+	                        } else {
+	                            throw err;
+	                        }
+		                }
+		            }
+		        );">inline url declaration</button>end result: "please wait"
+		    <div class="codeClick" onclick="this.className='code'; this.innerText = this.text = this.innerHTML = this.parentNode.getElementsByTagName('button')[0].onclick.toString();">code</div>
+		</div>
+	</body>
+</html>
