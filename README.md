@@ -1,5 +1,10 @@
 Using.js is a simple, very lightweight asynchronous script dependency loader for web browsers that I wrote in 2008 that allows a developer to write blocks of code in this fashion:
 
+    // register in a preceding script ..
+    using.register("jquery", true, "http://cachefile.net/scripts/jquery-1.2.3.js"); 
+    
+.. then consume synchronously .. 
+
     using("jquery"); // synchronously loads jQuery and de-registers jQuery from using 
     $("a").css("text-decoration", "none");
 
@@ -8,6 +13,7 @@ Using.js is a simple, very lightweight asynchronous script dependency loader for
     using ('jquery', function() {
         // do work using jQuery constructs
     });
+
 
 It documents dependencies within script and alleviates the need for fussing with injecting script dependencies on specific page headers. It also supports dependency trees, i.e. `using('jquery-ui' ...)` might depend upon jQuery, which would be loaded first.
 
