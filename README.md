@@ -19,4 +19,4 @@ It documents dependencies within script and alleviates the need for fussing with
 
 Similar loaders exist such as RequireJS. I am not antagonistic towards those, use what you please, but I chose the name, syntax, and behavior of using.js because it has some level of parallel to coding conventions in other languages such as C#.
 
-For more information about how to use using.js, please view the history in [the Wiki](wiki).
+For more information about how to use using.js, please view the history in [the Wiki](https://github.com/stimpy77/using.js/wiki).
