@@ -1,6 +1,6 @@
 /**
  * @author Jon Davis <jon@jondavis.net>
- * @version 1.4
+ * @version 1.4.0
  */
 var using = window.using = function( scriptName, callback, context ) {
     function durl(sc) {
