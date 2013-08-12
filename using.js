@@ -1,6 +1,6 @@
 /**
  * @author Jon Davis <jon@jondavis.net>
- * @version 1.3.1
+ * @version 1.4
  */
 var using = window.using = function( scriptName, callback, context ) {
     function durl(sc) {
@@ -23,7 +23,7 @@ var using = window.using = function( scriptName, callback, context ) {
         }
         scriptName = scriptNames[0];
         a=1;
-    } else {
+    } else { 
         while (typeof(arguments[++a]) == "string") {
             if (using.registered[scriptName] || durl(scriptName)) {
                 scriptNames.push(arguments[a]);
@@ -104,45 +104,52 @@ using.prototype = {
         };
     },
 
-	Registration : function(_name, _version, _remote, _asyncWait, _urls) {
-	    this.name = _name;
-	    var a=0;
-	    var arg = arguments[++a];
-	    var v=true;
-	    if (typeof(arg) == "string") {
-	        for (var c=0; c<arg.length; c++) {
-	            if ("1234567890.".indexOf(arg.substring(c)) == -1) {
-	                v = false;
-	                break;
-	            }
-	        }
-	        if (v) {
-	            this.version = arg; // not currently used
-	            arg = arguments[++a];
-	        } else {
-	            this.version = "1.0.0"; // not currently used
-	        }
-	    }
-	    if (arg && typeof(arg) == "boolean") {
-	        this.remote = arg;
-	        arg = arguments[++a];
+	Registration : function(name, version, remote, asyncWait, urls) {
+	    this.name = name;
+	    if (arguments.length == 5 || arguments.length == 6) {
+	      this.version = version || "1.0.0";
+	      this.remote = remote;
+	      this.asyncWait = asyncWait;
+	      this.urls = urls;
 	    } else {
-	        this.remote = false;
-	    }
-	    if (arg && typeof(arg) == "number") {
-	        this.asyncWait = _asyncWait;
-        } else {
-            this.asyncWait = 0;
-        }
-	    this.urls = new Array();
-	    if (arg && arg.length && typeof(arg) != "string") {
-	        this.urls = arg;
-	    } else {
-	        for (a=a; a<arguments.length; a++) {
-	            if (arguments[a] && typeof(arguments[a]) == "string") {
-	                this.urls.push(arguments[a]);
-	            }
-	        }
+  	    var a=0;
+  	    var arg = arguments[++a];
+  	    var v=true;
+  	    if (typeof(arg) == "string") {
+  	        for (var c=0; c<arg.length; c++) {
+  	            if ("1234567890.".indexOf(arg.substring(c)) == -1) {
+  	                v = false;
+  	                break;
+  	            }
+  	        }
+  	        if (v) {
+  	            this.version = arg; // not currently used
+  	            arg = arguments[++a];
+  	        } else {
+  	            this.version = "1.0.0"; // not currently used
+  	        }
+  	    }
+  	    if (arg && typeof(arg) == "boolean") {
+  	        this.remote = arg;
+  	        arg = arguments[++a];
+  	    } else {
+  	        this.remote = false;
+  	    }
+  	    if (arg && typeof(arg) == "number") {
+  	        this.asyncWait = _asyncWait;
+          } else {
+              this.asyncWait = 0;
+          }
+  	    this.urls = new Array();
+  	    if (arg && arg.length && typeof(arg) != "string") {
+  	        this.urls = arg; 
+  	    } else {
+  	        for (a=a; a<arguments.length; a++) {
+  	            if (arguments[a] && typeof(arguments[a]) == "string") {
+  	                this.urls.push(arguments[a]);
+  	            }
+  	        }
+  	    }
 	    }
 	    this.requirements = new Array();
 	    this.requires = function(resourceName, minimumVersion) {
@@ -154,7 +161,7 @@ using.prototype = {
 	        return this;
 	    }
 	    this.register = function(name, version, remote, asyncWait, urls) {
-	        return using.register(name, version, remote, asyncWait, urls);
+	        return using.register.apply(this, arguments);
 	    }
 	    return this;
 	},
@@ -163,15 +170,16 @@ using.prototype = {
         var reg;
         if (typeof(name) == "object") {
             reg = name;
-            reg = new using.prototype.Registration(reg.name, reg.version, reg.remote, reg.asyncWait, urls);
-        } else {
+            reg.urls=reg.urls||reg.url;
+            reg = new using.prototype.Registration(reg.name, reg.version, reg.remote, reg.asyncWait, typeof(reg.urls)=="string" ? [reg.urls] : reg.urls);
+        } else {  
             reg = new using.prototype.Registration(name, version, remote, asyncWait, urls);
         }
         if (!using.registered) using.registered = { };
-        if (using.registered[name] && window.console) {
-            window.console.log("Warning: Resource named \"" + name + "\" was already registered with using.register(); overwritten.");
+        if (using.registered[reg.name] && window.console) {
+            window.console.log("Warning: Resource named \"" + reg.name + "\" was already registered with using.register(); overwritten.");
         }
-        using.registered[name] = reg;
+        using.registered[reg.name] = reg;
         return reg;
     },
 	
