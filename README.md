@@ -1,4 +1,4 @@
-Using.js is a simple, very lightweight asynchronous script dependency loader for web browsers that allows a developer to write blocks of code in this fashion:
+Using.js is a simple asynchronous script dependency loader for web browsers that allows a developer to write blocks of code in this fashion:
 
     // register in a preceding script ..
     using.register("jquery", true, "http://cachefile.net/scripts/jquery-1.2.3.js"); 
