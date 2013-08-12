@@ -106,7 +106,7 @@ using.prototype = {
 
 	Registration : function(name, version, remote, asyncWait, urls) {
 	    this.name = name;
-	    if (arguments.length == 5 || arguments.length == 6) {
+	    if (typeof(remote) === "boolean" && (arguments.length == 5 || arguments.length == 6)) {
 	      this.version = version || "1.0.0";
 	      this.remote = remote;
 	      this.asyncWait = asyncWait;
